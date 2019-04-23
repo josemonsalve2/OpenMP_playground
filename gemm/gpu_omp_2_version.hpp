@@ -18,11 +18,11 @@ public:
         #pragma omp target teams distribute map(to: ptrA[0:N*K], ptrB[0:M*K]) map(tofrom: ptrC[0:M*N]) firstprivate(tmp) 
         for (int i = 0; i < M; i ++) 
         {
-            #pragma omp parallel for firstprivate(tmp) 
+            #pragma omp parallel for firstprivate(tmp) num_threads(256)
             for (int j = 0; j < N; j ++) 
             {
                 ptrC[j*M + i] = beta * ptrC[j*M + i];
-                #pragma omp simd reduction(+:tmp) simdlen(128) 
+                #pragma omp simd reduction(+:tmp) simdlen(64) 
                 for (int k = 0; k < K; k++)
                 {
                     tmp += alpha * ptrA[j*K + k] * ptrB[k*M + i];
