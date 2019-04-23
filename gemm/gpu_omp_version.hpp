@@ -15,13 +15,14 @@ public:
         uint32_t N = this->size_N;
         uint32_t K = this->size_K;
         T tmp = 0;
-        #pragma omp target teams distribute parallel for num_teams(16) map(to: ptrA[0:N*K], ptrB[0:M*K]) map(tofrom: ptrC[0:M*N]) num_threads(256) private(tmp) collapse(2)
-        for (int i = 0; i < M; i ++) 
+
+        #pragma omp target teams distribute parallel for map(to: ptrA[0:N*K], ptrB[0:M*K]) map(tofrom: ptrC[0:M*N]) firstprivate(tmp) collapse(2)
+        for (int i = 0; i < M; i ++)
         {
             for (int j = 0; j < N; j ++) 
             {
                 ptrC[j*M + i] = beta * ptrC[j*M + i];
-                #pragma omp simd reduction(+:tmp) simdlen(64)
+                #pragma omp simd reduction(+:tmp) simdlen(64) 
                 for (int k = 0; k < K; k++)
                 {
                     tmp += alpha * ptrA[j*K + k] * ptrB[k*M + i];

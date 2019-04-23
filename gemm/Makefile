@@ -1,15 +1,25 @@
 CC?=gcc
 CXX?=g++
 VERIFY ?= 0
+
 ifeq ($(VERIFY), 1)
   $(info VERIFYING RESULTS)
 endif
 CFLAGS+=-I. -DVERIFY=${VERIFY}
-CXXFLAGS+=-I. -std=c++11 -DVERIFY=${VERIFY}
+CXXFLAGS+=-I. -std=c++11 -DVERIFY=${VERIFY} 
 ifeq (${DEBUG}, 1)
   $(info DEBUG ON)
   CFLAGS += -g -pg
   CXXFLAGS += -g -pg
+endif
+ifdef PRINT
+  CFLAGS += -DPRINT=1
+  CXXFLAGS += -DPRINT=1
+endif
+ifdef NUM_REPS
+  $(info NUM_REPS = ${NUM_REPS})
+  CFLAGS += -DNUM_REPS=${NUM_REPS}
+  CXXFLAGS += -DNUM_REPS=${NUM_REPS}
 endif
 SRC = main.cpp
 OBJ = gemm_tester

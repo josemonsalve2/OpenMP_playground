@@ -92,7 +92,7 @@ public:
 
     void time_compute(const T alpha, const T beta) {
         double start, end;
-        for (int i = 0; i < 2; i++) 
+        for (int i = 0; i < NUM_REPS; i++) 
         {
             start = omp_get_wtime();
             mm_compute(alpha, beta);

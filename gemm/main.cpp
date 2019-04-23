@@ -6,6 +6,10 @@
 #define VERIFY 0
 #endif
 
+#ifndef NUM_REPS
+#define NUM_REPS 10
+#endif 
+
 #include "matrix.hpp"
 
 // INCLUDING THE DIFFERENT VERSIONS
@@ -54,7 +58,9 @@ int main(int argc, char **argv) {
     double * verificationC;
     verificationC = new double[M*N];
     gemm_cpu<double> verification(M,N,K);
-    verification.mm_compute(alpha, beta);
+    for (int i = 0; i < NUM_REPS; i++){
+        verification.mm_compute(alpha, beta);
+    }
     for (int j = 0; j < N; j ++)
         for (int i = 0; i < M; i++)
             verificationC[j*M + i] = verification.getC()[j*M + i];
@@ -79,7 +85,13 @@ int main(int argc, char **argv) {
     cout << "starting tests" << endl;
     for(auto it = myTesters.begin(); it != myTesters.end(); it++)    {
         gemm<double> * thisImpl = *it;
+#if PRINT == 1
+        thisImpl->print_matrices();
+#endif 
         thisImpl->time_compute(alpha, beta);
+#if PRINT == 1
+        thisImpl->print_matrices();
+#endif
 #if VERIFY == 1
         if (thisImpl->verify_against(verificationC)) {
             cout << "CORRECT IMPLEMENTATION " << thisImpl->getImpName() << endl; 
